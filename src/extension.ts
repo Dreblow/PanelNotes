@@ -1,20 +1,19 @@
 import * as vscode from "vscode";
+import { loadPanelNotesConfig } from "./config";
 
 class PanelNotesViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "panel-notes.view";
 
-  public resolveWebviewView(
+  public async resolveWebviewView(
     webviewView: vscode.WebviewView
-  ): void {
-    webviewView.webview.options = {
-      enableScripts: false
-    };
+  ): Promise<void> {
+    const config = await loadPanelNotesConfig();
 
-    webviewView.webview.html = this.getHtml();
-  }
+    const items = config.items
+      .map((item) => `<li>${item.name}</li>`)
+      .join("");
 
-  private getHtml(): string {
-    return `
+    webviewView.webview.html = `
       <!DOCTYPE html>
       <html lang="en">
         <head>
@@ -27,8 +26,11 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
         </head>
 
         <body>
-          <h1>Panel Notes</h1>
-          <p>Panel Notes is alive.</p>
+          <h1>📝 Panel Notes</h1>
+
+          <ul>
+            ${items}
+          </ul>
         </body>
       </html>
     `;
@@ -36,16 +38,14 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
-    const provider = new PanelNotesViewProvider();
+  const provider = new PanelNotesViewProvider();
 
-    context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider(
-            PanelNotesViewProvider.viewType,
-            provider
-        )
-    );
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      PanelNotesViewProvider.viewType,
+      provider
+    )
+  );
 }
 
-export function deactivate(): void {
-  // Nothing to clean up yet.
-}
+export function deactivate(): void {}

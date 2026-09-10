@@ -8,7 +8,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": [
+      "node",
+      "vscode"
+    ]
   },
   "include": [
     "src/**/*.ts"
