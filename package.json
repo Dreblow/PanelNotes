@@ -17,7 +17,7 @@
       "panel": [
         {
             "id": "panel-notes",
-            "title": "Panel Notes",
+            "title": "📝 Panel Notes",
             "icon": "media/panel-notes.svg"
         }
       ]
@@ -26,7 +26,7 @@
       "panel-notes": [
         {
             "id": "panel-notes.view",
-            "name": "Panel Notes",
+            "name": "📝 Panel Notes",
             "type": "webview",
             "icon": "media/panel-notes.svg"
         }
