@@ -1,0 +1,46 @@
+{
+  "name": "panel-notes",
+  "displayName": "Panel Notes",
+  "description": "Keep Markdown, HTML, and quick notes right in the VS Code panel.",
+  "version": "0.1.0",
+  "publisher": "Dreblow Designs",
+  "engines": {
+    "vscode": "^1.103.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "panel": [
+        {
+            "id": "panel-notes",
+            "title": "Panel Notes",
+            "icon": "media/panel-notes.svg"
+        }
+      ]
+    },
+    "views": {
+      "panel-notes": [
+        {
+            "id": "panel-notes.view",
+            "name": "Panel Notes",
+            "type": "webview",
+            "icon": "media/panel-notes.svg"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.103.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.0"
+  }
+}
