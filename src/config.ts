@@ -16,7 +16,9 @@ export async function loadPanelNotesConfig(): Promise<PanelNotesConfig> {
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
 
   if (!workspaceFolder) {
-    return { items: [] };
+    return {
+      items: []
+    };
   }
 
   const configUri = vscode.Uri.joinPath(
@@ -27,10 +29,17 @@ export async function loadPanelNotesConfig(): Promise<PanelNotesConfig> {
 
   try {
     const file = await vscode.workspace.fs.readFile(configUri);
-    const text = Buffer.from(file).toString("utf8");
+    const text = new TextDecoder("utf-8").decode(file);
 
     return JSON.parse(text) as PanelNotesConfig;
-  } catch {
-    return { items: [] };
+  } catch (error) {
+    console.error(
+      "Panel Notes: failed to load config",
+      error
+    );
+
+    return {
+      items: []
+    };
   }
 }

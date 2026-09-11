@@ -5,9 +5,10 @@
       "name": "Run Panel Notes",
       "type": "extensionHost",
       "request": "launch",
+      "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}",
-        "${workspaceFolder}"
+        "${workspaceFolder}/../PanelNotes-Test",
+        "--extensionDevelopmentPath=${workspaceFolder}"
       ],
       "outFiles": [
         "${workspaceFolder}/out/**/*.js"
