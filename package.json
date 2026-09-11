@@ -20,19 +20,19 @@
     "viewsContainers": {
       "panel": [
         {
-            "id": "panel-notes",
-            "title": "📝 Panel Notes",
-            "icon": "media/panel-notes.svg"
+          "id": "panel-notes",
+          "title": "📝 Panel Notes",
+          "icon": "media/panel-notes.svg"
         }
       ]
     },
     "views": {
       "panel-notes": [
         {
-            "id": "panel-notes.view",
-            "name": "📝 Panel Notes",
-            "type": "webview",
-            "icon": "media/panel-notes.svg"
+          "id": "panel-notes.view",
+          "name": "📝 Panel Notes",
+          "type": "webview",
+          "icon": "media/panel-notes.svg"
         }
       ]
     }
@@ -42,9 +42,13 @@
     "watch": "tsc -watch -p ./",
     "vscode:prepublish": "npm run compile"
   },
+  "dependencies": {
+    "markdown-it": "^14.1.0"
+  },
   "devDependencies": {
-    "@types/vscode": "^1.103.0",
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.0.0",
+    "@types/vscode": "^1.103.0",
     "typescript": "^5.9.0"
   }
 }
