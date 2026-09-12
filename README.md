@@ -1,11 +1,54 @@
-# PanelNotes
+# 📝 Panel Notes
 
-A VS Code panel for quick access to Markdown, HTML, and built-in workspace notes.
+Keep Markdown notes and READMEs right in the VS Code panel.
 
+README previews are no problem on large screens or when you're mainly reading, but on smaller screens there are times when you just want a quick reference without moving away from the screen you're already on.
+
+Use `Cmd + J` on macOS or `Ctrl + J` on Windows/Linux to flip the panel up, grab a quick command or reference, then hide it again without breaking your flow.
+
+Panel Notes gives you fast access to the Markdown files you actually use without digging through the Explorer every time.
+
+![Panel Notes Demo](media/readme/Panel-Notes.gif)
+
+## How It Works
+
+1. Open any Markdown file in your workspace.
+2. Panel Notes automatically adds it to `.vscode/panel-notes.json`.
+3. Open the **Panel Notes** tab in the VS Code panel.
+4. Click any saved Markdown file to view it directly in the panel.
+5. Use **Clear** whenever you want to reset the list.
+
+Files that no longer exist are automatically removed when VS Code starts or when the extension restarts.
+
+## Features
+
+- Automatic Markdown discovery based on files you actually open
+- Persistent workspace-specific note list
+- Markdown rendering directly inside the VS Code panel
+- Syntax-highlighted code blocks
+- Copy buttons on code blocks
+- Per-document scroll-position memory
+- Automatic cleanup of deleted files
+- One-click Clear button
+- Zero manual configuration required
+
+## Configuration
+
+Panel Notes automatically creates:
+
+```text
+.vscode/panel-notes.json
+```
 ---
+---
+
+Since this extension is open source, you can find it [here](https://github.com/Dreblow/PanelNotes)
+
 ## Roadmap
 
 Panel Notes v0.1.0 focuses on one thing: making Markdown files in a workspace easy to access from the VS Code panel.
+
+Here are some ideas to come:
 
 ### File Discovery & Refresh 
 
@@ -86,7 +129,7 @@ Then reload VS Code to test the newly installed version.
 The `--force` option is useful during development because it replaces the currently installed version with the newly packaged build.
 
 
-## One Stop Shop
+## One Stop Shop for QA
 
 ```bash
 npm run compile && npx @vscode/vsce package && code --install-extension panel-notes-0.1.0.vsix --force && osascript -e 'tell application "Visual Studio Code" to quit'
