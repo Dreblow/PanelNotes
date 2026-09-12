@@ -13,13 +13,23 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
   private webviewView?: vscode.WebviewView;
   private items: PanelNoteItem[] = [];
 
+  constructor(
+    private readonly context: vscode.ExtensionContext
+  ) {}
+
   public async resolveWebviewView(
     webviewView: vscode.WebviewView
   ): Promise<void> {
     this.webviewView = webviewView;
 
     webviewView.webview.options = {
-      enableScripts: true
+      enableScripts: true,
+      localResourceRoots: [
+        vscode.Uri.joinPath(
+          this.context.extensionUri,
+          "media"
+        )
+      ]
     };
 
     const config = await loadPanelNotesConfig();
@@ -77,10 +87,12 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
       <html lang="en">
         <head>
           <meta charset="UTF-8">
+
           <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0"
           >
+
           <title>${item.name}</title>
         </head>
 
@@ -100,11 +112,14 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
 
             document
               .getElementById("back-button")
-              .addEventListener("click", () => {
-                vscode.postMessage({
-                  command: "back"
-                });
-              });
+              .addEventListener(
+                "click",
+                () => {
+                  vscode.postMessage({
+                    command: "back"
+                  });
+                }
+              );
           </script>
         </body>
       </html>
@@ -138,7 +153,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
         new TextDecoder("utf-8").decode(file);
 
       this.webviewView.webview.html =
-        this.getMarkdownHtml(
+        await this.getMarkdownHtml(
           item.name,
           markdown
         );
@@ -250,128 +265,48 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
     `;
   }
 
-  private getMarkdownHtml(
+  private async getMarkdownHtml(
     name: string,
     markdown: string
-  ): string {
-    const renderedMarkdown = renderMarkdown(markdown);
+  ): Promise<string> {
+    if (!this.webviewView) {
+      return "";
+    }
 
-    return `
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8">
+    const templateUri = vscode.Uri.joinPath(
+      this.context.extensionUri,
+      "media",
+      "markdown.html"
+    );
 
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          >
+    const templateFile =
+      await vscode.workspace.fs.readFile(templateUri);
 
-          <title>${name}</title>
+    const template =
+      new TextDecoder("utf-8").decode(templateFile);
 
-          <style>
-            body {
-              padding: 16px;
-              color: var(--vscode-foreground);
-              background: var(--vscode-editor-background);
-              font-family: var(--vscode-font-family);
-            }
+    const cssUri =
+      this.webviewView.webview.asWebviewUri(
+        vscode.Uri.joinPath(
+          this.context.extensionUri,
+          "media",
+          "markdown.css"
+        )
+      );
 
-            .back-button {
-              margin-bottom: 16px;
-              padding: 6px 10px;
-              color: var(--vscode-button-foreground);
-              background: var(--vscode-button-background);
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-            }
+    const renderedMarkdown =
+      renderMarkdown(markdown);
 
-            .back-button:hover {
-              background: var(--vscode-button-hoverBackground);
-            }
-
-            .markdown {
-              line-height: 1.6;
-            }
-
-            .markdown h1 {
-              font-size: 2em;
-              border-bottom: 1px solid var(--vscode-panel-border);
-              padding-bottom: 0.3em;
-            }
-
-            .markdown h2 {
-              font-size: 1.5em;
-              border-bottom: 1px solid var(--vscode-panel-border);
-              padding-bottom: 0.3em;
-            }
-
-            .markdown code {
-              font-family: var(--vscode-editor-font-family);
-              background: var(--vscode-textCodeBlock-background);
-              padding: 2px 5px;
-              border-radius: 4px;
-            }
-
-            .markdown pre {
-              overflow-x: auto;
-              padding: 12px;
-              background: var(--vscode-textCodeBlock-background);
-              border-radius: 6px;
-            }
-
-            .markdown pre code {
-              padding: 0;
-              background: transparent;
-            }
-
-            .markdown a {
-              color: var(--vscode-textLink-foreground);
-            }
-
-            .markdown blockquote {
-              margin-left: 0;
-              padding-left: 12px;
-              border-left: 4px solid var(--vscode-panel-border);
-              color: var(--vscode-descriptionForeground);
-            }
-
-            .markdown img {
-              max-width: 100%;
-            }
-          </style>
-        </head>
-
-        <body>
-          <button
-            class="back-button"
-            id="back-button"
-          >
-            ← Back
-          </button>
-
-          <div class="markdown">
-            ${renderedMarkdown}
-          </div>
-
-          <script>
-            const vscode = acquireVsCodeApi();
-
-            document
-              .getElementById("back-button")
-              .addEventListener(
-                "click",
-                () => {
-                  vscode.postMessage({
-                    command: "back"
-                  });
-                }
-              );
-          </script>
-        </body>
-      </html>
-    `;
+    return template
+      .replace("{{TITLE}}", name)
+      .replace(
+        "{{CSS_URI}}",
+        cssUri.toString()
+      )
+      .replace(
+        "{{CONTENT}}",
+        renderedMarkdown
+      );
   }
 }
 
@@ -379,7 +314,7 @@ export function activate(
   context: vscode.ExtensionContext
 ): void {
   const provider =
-    new PanelNotesViewProvider();
+    new PanelNotesViewProvider(context);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
