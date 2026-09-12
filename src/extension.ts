@@ -301,7 +301,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
       .replace("{{TITLE}}", name)
       .replace(
         "{{CSS_URI}}",
-        cssUri.toString()
+        `${cssUri.toString()}?v=${Date.now()}`
       )
       .replace(
         "{{CONTENT}}",
