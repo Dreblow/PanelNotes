@@ -52,3 +52,10 @@ code --install-extension panel-notes-0.1.0.vsix --force
 Then reload VS Code to test the newly installed version.
 
 The `--force` option is useful during development because it replaces the currently installed version with the newly packaged build.
+
+
+## One Stop Shop
+
+```bash
+npm run compile && npx @vscode/vsce package && code --install-extension panel-notes-0.1.0.vsix --force && osascript -e 'tell application "Visual Studio Code" to quit'
+```

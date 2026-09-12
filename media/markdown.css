@@ -2,46 +2,31 @@ body {
   margin: 0;
   padding: 0;
 
-  color: var(--vscode-editor-foreground, #bbbebf) !important;
-  background: var(--vscode-editor-background, #121314) !important;
+  color: #bbbebf !important;
+  background: rgb(13, 17, 23) !important;
 
-  font-family: var(--vscode-font-family);
-  font-size: var(--vscode-font-size);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
 }
 
-
-/* -------------------------------------------------------
- * Back Button
- * ----------------------------------------------------- */
-
-body .back-button {
+.back-button {
   margin: 12px 16px;
   padding: 4px 10px;
 
-  color: var(--vscode-button-foreground, #ffffff) !important;
-  background: var(--vscode-button-background, #297aa0) !important;
+  color: #ffffff !important;
+  background: #297aa0 !important;
 
   border: none !important;
-  border-radius: 2px !important;
-
-  font-family: var(--vscode-font-family);
-  font-size: var(--vscode-font-size);
+  border-radius: 2px;
 
   cursor: pointer;
 }
 
-body .back-button:hover {
-  background: var(--vscode-button-hoverBackground, #2b7da3) !important;
+.back-button:hover {
+  background: #2b7da3 !important;
 }
 
-
-/* -------------------------------------------------------
- * Markdown Container
- * ----------------------------------------------------- */
-
-body .markdown {
-  box-sizing: border-box;
-
+.markdown {
   max-width: 980px;
 
   margin: 0 auto;
@@ -49,6 +34,9 @@ body .markdown {
 
   line-height: 1.6;
   word-wrap: break-word;
+
+  color: #bbbebf !important;
+  background: #121314 !important;
 }
 
 .markdown > :first-child {
@@ -59,11 +47,6 @@ body .markdown {
   margin-bottom: 0;
 }
 
-
-/* -------------------------------------------------------
- * Headings
- * ----------------------------------------------------- */
-
 .markdown h1,
 .markdown h2,
 .markdown h3,
@@ -73,7 +56,7 @@ body .markdown {
   margin-top: 24px;
   margin-bottom: 16px;
 
-  color: var(--vscode-editor-foreground, #bbbebf) !important;
+  color: #bbbebf !important;
 
   font-weight: 600;
   line-height: 1.25;
@@ -84,9 +67,7 @@ body .markdown {
 
   padding-bottom: 0.3em;
 
-  border-bottom:
-    1px solid
-    var(--vscode-panel-border, #2a2b2c);
+  border-bottom: 1px solid #2a2b2c;
 }
 
 .markdown h2 {
@@ -94,9 +75,7 @@ body .markdown {
 
   padding-bottom: 0.3em;
 
-  border-bottom:
-    1px solid
-    var(--vscode-panel-border, #2a2b2c);
+  border-bottom: 1px solid #2a2b2c;
 }
 
 .markdown h3 {
@@ -106,11 +85,6 @@ body .markdown {
 .markdown h4 {
   font-size: 1em;
 }
-
-
-/* -------------------------------------------------------
- * Paragraphs / Lists
- * ----------------------------------------------------- */
 
 .markdown p {
   margin-top: 0;
@@ -129,58 +103,32 @@ body .markdown {
   margin: 0.25em 0;
 }
 
-
-/* -------------------------------------------------------
- * Links
- * ----------------------------------------------------- */
-
 .markdown a {
-  color: var(--vscode-textLink-foreground, #48a0c7) !important;
-
+  color: #48a0c7 !important;
   text-decoration: none;
 }
 
 .markdown a:hover {
-  color: var(--vscode-textLink-activeForeground, #53a5ca) !important;
-
+  color: #53a5ca !important;
   text-decoration: underline;
 }
 
-
-/* -------------------------------------------------------
- * Inline Code
- * ----------------------------------------------------- */
-
+/* Inline code */
 .markdown code {
   padding: 0.15em 0.4em;
 
-  color:
-    var(
-      --vscode-textPreformat-foreground,
-      #8c8c8c
-    ) !important;
-
-  background:
-    var(
-      --vscode-textPreformat-background,
-      #262626
-    ) !important;
+  color: #8c8c8c !important;
+  background: rgb(13, 17, 22) !important;
 
   border-radius: 4px;
 
-  font-family: var(--vscode-editor-font-family);
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   font-size: 0.95em;
 }
 
-
-/* -------------------------------------------------------
- * Fenced Code Blocks
- * ----------------------------------------------------- */
-
+/* Fenced code blocks */
 .markdown pre,
 .markdown pre.hljs {
-  box-sizing: border-box;
-
   margin-top: 0;
   margin-bottom: 16px;
 
@@ -188,32 +136,18 @@ body .markdown {
 
   overflow-x: auto;
 
-  color:
-    var(
-      --vscode-editor-foreground,
-      #bbbebf
-    ) !important;
-
-  background:
-    var(
-      --vscode-textCodeBlock-background,
-      #242526
-    ) !important;
+  color: #bbbebf !important;
+  background: #242526 !important;
 
   border: none !important;
   border-radius: 6px;
 
-  font-family: var(--vscode-editor-font-family);
-  font-size: var(--vscode-editor-font-size);
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 13px;
   line-height: 1.45;
 }
 
-
-/*
- * Code nested inside a fenced block must not
- * paint its own inline-code background.
- */
-
+/* Remove inline-code background inside fenced blocks */
 .markdown pre code,
 .markdown pre.hljs code {
   display: block;
@@ -233,154 +167,79 @@ body .markdown {
   white-space: pre;
 }
 
-
-/*
- * Highlight.js may control syntax colors.
- * It does NOT control the block background.
- */
-
+/* Highlight.js syntax colors only */
 .markdown .hljs {
-  color: var(--vscode-editor-foreground, #bbbebf) !important;
+  color: #bbbebf !important;
 }
-
-
-/* -------------------------------------------------------
- * Highlight.js Syntax Colors
- * ----------------------------------------------------- */
 
 .markdown .hljs-keyword,
 .markdown .hljs-selector-tag,
 .markdown .hljs-literal {
-  color:
-    var(
-      --vscode-symbolIcon-keywordForeground,
-      #bfbfbf
-    ) !important;
+  color: #c586c0 !important;
 }
 
 .markdown .hljs-string,
 .markdown .hljs-attr,
 .markdown .hljs-template-tag,
 .markdown .hljs-template-variable {
-  color:
-    var(
-      --vscode-symbolIcon-stringForeground,
-      #bfbfbf
-    ) !important;
+  color: #ce9178 !important;
 }
 
 .markdown .hljs-number {
-  color:
-    var(
-      --vscode-symbolIcon-numberForeground,
-      #bfbfbf
-    ) !important;
+  color: #b5cea8 !important;
 }
 
 .markdown .hljs-title,
 .markdown .hljs-title.function_,
 .markdown .hljs-function {
-  color:
-    var(
-      --vscode-symbolIcon-functionForeground,
-      #b180d7
-    ) !important;
+  color: #dcdcaa !important;
 }
 
 .markdown .hljs-type,
 .markdown .hljs-class .hljs-title {
-  color:
-    var(
-      --vscode-symbolIcon-classForeground,
-      #ee9d28
-    ) !important;
+  color: #4ec9b0 !important;
 }
 
 .markdown .hljs-variable,
 .markdown .hljs-params {
-  color:
-    var(
-      --vscode-symbolIcon-variableForeground,
-      #75beff
-    ) !important;
+  color: #9cdcfe !important;
 }
 
 .markdown .hljs-comment,
 .markdown .hljs-quote {
-  color:
-    var(
-      --vscode-descriptionForeground,
-      #8c8c8c
-    ) !important;
+  color: #6a9955 !important;
 
   font-style: italic;
 }
 
 .markdown .hljs-built_in {
-  color:
-    var(
-      --vscode-symbolIcon-methodForeground,
-      #b180d7
-    ) !important;
+  color: #4ec9b0 !important;
 }
-
-
-/* -------------------------------------------------------
- * Blockquotes
- * ----------------------------------------------------- */
 
 .markdown blockquote {
   margin: 0 0 16px 0;
 
   padding: 8px 12px;
 
-  color:
-    var(
-      --vscode-descriptionForeground,
-      #8c8c8c
-    ) !important;
+  color: #8c8c8c !important;
+  background: #242526 !important;
 
-  background:
-    var(
-      --vscode-textBlockQuote-background,
-      #242526
-    ) !important;
-
-  border-left:
-    4px solid
-    var(
-      --vscode-textBlockQuote-border,
-      #2a2b2c
-    );
+  border-left: 4px solid #2a2b2c;
 }
 
 .markdown blockquote > :last-child {
   margin-bottom: 0;
 }
 
-
-/* -------------------------------------------------------
- * Horizontal Rule
- * ----------------------------------------------------- */
-
 .markdown hr {
   height: 1px;
 
   margin: 24px 0;
 
-  background:
-    var(
-      --vscode-panel-border,
-      #2a2b2c
-    ) !important;
+  background: #2a2b2c !important;
 
   border: 0;
 }
-
-
-/* -------------------------------------------------------
- * Tables
- * ----------------------------------------------------- */
 
 .markdown table {
   display: block;
@@ -399,36 +258,17 @@ body .markdown {
 .markdown td {
   padding: 6px 12px;
 
-  border:
-    1px solid
-    var(
-      --vscode-panel-border,
-      #2a2b2c
-    );
+  border: 1px solid #2a2b2c;
 
   text-align: left;
 }
 
 .markdown th {
-  color:
-    var(
-      --vscode-editor-foreground,
-      #bbbebf
-    ) !important;
-
-  background:
-    var(
-      --vscode-editorWidget-background,
-      #202122
-    ) !important;
+  color: #bbbebf !important;
+  background: #202122 !important;
 
   font-weight: 600;
 }
-
-
-/* -------------------------------------------------------
- * Images
- * ----------------------------------------------------- */
 
 .markdown img {
   max-width: 100%;
