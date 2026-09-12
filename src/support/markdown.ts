@@ -13,14 +13,8 @@ const markdown = new MarkdownIt({
   linkify: true,
   typographer: true,
 
-  highlight: (
-    code: string,
-    language: string
-  ): string => {
-    if (
-      language &&
-      hljs.getLanguage(language)
-    ) {
+  highlight: (code: string, language: string): string => {
+    if (language &&hljs.getLanguage(language)) {
       try {
         const result = hljs.highlight(code, {
           language,
@@ -37,8 +31,6 @@ const markdown = new MarkdownIt({
   }
 });
 
-export function renderMarkdown(
-  source: string
-): string {
+export function renderMarkdown(source: string): string {
   return markdown.render(source);
 }

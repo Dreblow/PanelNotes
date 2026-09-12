@@ -157,10 +157,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
       return;
     }
 
-    const markdownUri = vscode.Uri.joinPath(
-      workspaceFolder.uri,
-      item.path
-    );
+    const markdownUri = vscode.Uri.joinPath(workspaceFolder.uri, item.path);
 
     try {
       const file = await vscode.workspace.fs.readFile(markdownUri);

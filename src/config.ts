@@ -34,7 +34,6 @@ export async function loadPanelNotesConfig(): Promise<PanelNotesConfig> {
     return JSON.parse(text) as PanelNotesConfig;
   } catch (error) {
     console.error("Panel Notes: didn't find panel-notes.json", error);
-
     return {
       items: []
     };
