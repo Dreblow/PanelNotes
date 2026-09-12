@@ -38,6 +38,59 @@
             command: "back"
           });
         });
+
+      document
+        .querySelectorAll(".markdown pre")
+        .forEach((pre) => {
+          const code = pre.querySelector("code");
+
+          if (!code) {
+            return;
+          }
+
+          const button = document.createElement("button");
+
+          button.className = "copy-button";
+          button.textContent = "Copy";
+          button.title = "Copy code";
+
+          button.addEventListener("click", async () => {
+            const text = code.innerText;
+
+            try {
+              await navigator.clipboard.writeText(text);
+
+              button.textContent = "Copied!";
+
+              setTimeout(() => {
+                button.textContent = "Copy";
+              }, 1200);
+            } catch {
+              const textarea =
+                document.createElement("textarea");
+
+              textarea.value = text;
+              textarea.style.position = "fixed";
+              textarea.style.opacity = "0";
+
+              document.body.appendChild(textarea);
+
+              textarea.select();
+
+              document.execCommand("copy");
+
+              textarea.remove();
+
+              button.textContent = "Copied!";
+
+              setTimeout(() => {
+                button.textContent = "Copy";
+              }, 1200);
+            }
+          });
+
+          pre.appendChild(button);
+        });
     </script>
   </body>
 </html>
