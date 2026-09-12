@@ -1,18 +1,9 @@
 {
   "items": [
     {
-      "name": "README",
-      "type": "markdown",
-      "path": "README.md"
-    },
-    {
-      "name": "Example HTML",
-      "type": "html",
-      "path": "docs/example.html"
-    },
-    {
-      "name": "Notepad",
-      "type": "note"
+      "name": "README.md",
+      "path": "README.md",
+      "type": "markdown"
     }
   ]
 }

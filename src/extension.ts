@@ -5,7 +5,15 @@ import {
   PanelNoteItem
 } from "./config";
 
-import { renderMarkdown } from "./support/markdown";
+import { 
+  renderMarkdown 
+} from "./support/markdown";
+
+import {
+  addActiveMarkdownFile,
+  cleanPanelNotesConfig
+} from "./support/workspace";
+
 
 class PanelNotesViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "panel-notes.view";
@@ -13,13 +21,18 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
   private webviewView?: vscode.WebviewView;
   private items: PanelNoteItem[] = [];
 
-  constructor(
-    private readonly context: vscode.ExtensionContext
-  ) {}
+  constructor(private readonly context: vscode.ExtensionContext) {}
 
-  public async resolveWebviewView(
-    webviewView: vscode.WebviewView
-  ): Promise<void> {
+
+  public async reloadItems(): Promise<void> {
+    const config = await loadPanelNotesConfig();
+
+    this.items = config.items;
+
+    this.showItemList();
+  }
+
+  public async resolveWebviewView(webviewView: vscode.WebviewView): Promise<void> {
     this.webviewView = webviewView;
 
     webviewView.webview.options = {
@@ -66,13 +79,10 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
       return;
     }
 
-    this.webviewView.webview.html =
-      this.getListHtml(this.items);
+    this.webviewView.webview.html = this.getListHtml(this.items);
   }
 
-  private async openItem(
-    item: PanelNoteItem
-  ): Promise<void> {
+  private async openItem(item: PanelNoteItem): Promise<void> {
     if (!this.webviewView) {
       return;
     }
@@ -126,15 +136,12 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
     `;
   }
 
-  private async openMarkdown(
-    item: PanelNoteItem
-  ): Promise<void> {
+  private async openMarkdown(item: PanelNoteItem): Promise<void> {
     if (!this.webviewView) {
       return;
     }
 
-    const workspaceFolder =
-      vscode.workspace.workspaceFolders?.[0];
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
 
     if (!workspaceFolder || !item.path) {
       return;
@@ -146,28 +153,19 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
     );
 
     try {
-      const file =
-        await vscode.workspace.fs.readFile(markdownUri);
+      const file = await vscode.workspace.fs.readFile(markdownUri);
+      const markdown = new TextDecoder("utf-8").decode(file);
 
-      const markdown =
-        new TextDecoder("utf-8").decode(file);
-
-      this.webviewView.webview.html =
-        await this.getMarkdownHtml(
+      this.webviewView.webview.html = await this.getMarkdownHtml(
           item.name,
           markdown
         );
     } catch (error) {
-      console.error(
-        "Panel Notes: failed to load markdown",
-        error
-      );
+      console.error("Panel Notes: failed to load markdown", error);
     }
   }
 
-  private getListHtml(
-    items: PanelNoteItem[]
-  ): string {
+  private getListHtml(items: PanelNoteItem[]): string {
     const itemsHtml = items
       .map(
         (item) => `
@@ -265,10 +263,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
     `;
   }
 
-  private async getMarkdownHtml(
-    name: string,
-    markdown: string
-  ): Promise<string> {
+  private async getMarkdownHtml(name: string, markdown: string): Promise<string> {
     if (!this.webviewView) {
       return "";
     }
@@ -279,47 +274,53 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
       "markdown.html"
     );
 
-    const templateFile =
-      await vscode.workspace.fs.readFile(templateUri);
+    const templateFile = await vscode.workspace.fs.readFile(templateUri);
+    const template = new TextDecoder("utf-8").decode(templateFile);
 
-    const template =
-      new TextDecoder("utf-8").decode(templateFile);
+    const cssUri = this.webviewView.webview.asWebviewUri(
+                                                          vscode.Uri.joinPath(
+                                                            this.context.extensionUri,
+                                                            "media",
+                                                            "markdown.css"
+                                                          )
+                                                        );
 
-    const cssUri =
-      this.webviewView.webview.asWebviewUri(
-        vscode.Uri.joinPath(
-          this.context.extensionUri,
-          "media",
-          "markdown.css"
-        )
-      );
-
-    const renderedMarkdown =
-      renderMarkdown(markdown);
+    const renderedMarkdown = renderMarkdown(markdown);
 
     return template
       .replace("{{TITLE}}", name)
-      .replace(
-        "{{CSS_URI}}",
-        `${cssUri.toString()}?v=${Date.now()}`
-      )
-      .replace(
-        "{{CONTENT}}",
-        renderedMarkdown
-      );
+      .replace("{{CSS_URI}}", `${cssUri.toString()}?v=${Date.now()}`)
+      .replace("{{CONTENT}}", renderedMarkdown);
   }
 }
 
-export function activate(
-  context: vscode.ExtensionContext
-): void {
-  const provider =
-    new PanelNotesViewProvider(context);
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
+  await cleanPanelNotesConfig();
+
+  const provider = new PanelNotesViewProvider(context);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       PanelNotesViewProvider.viewType,
       provider
+    )
+  );
+
+  const added = await addActiveMarkdownFile();
+
+  if (added) {
+    await provider.reloadItems();
+  }
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor(
+      async () => {
+        const added = await addActiveMarkdownFile();
+
+        if (added) {
+          await provider.reloadItems();
+        }
+      }
     )
   );
 }
