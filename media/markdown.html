@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{TITLE}}</title>
+
+    <link
+      rel="stylesheet"
+      href="{{CSS_URI}}"
+    >
+  </head>
+
+  <body>
+    <button
+      class="back-button"
+      id="back-button"
+    >
+      ← Back
+    </button>
+
+    <div class="markdown">
+      {{CONTENT}}
+    </div>
+
+    <script>
+      const vscode = acquireVsCodeApi();
+
+      /*
+       * The title is currently the relative file path, so it gives
+       * us a unique key for each Markdown document.
+       */
+      const noteKey = document.title;
+
+      let state =
+        vscode.getState() || {
+          scrollPositions: {}
+        };
+
+      if (!state.scrollPositions) {
+        state.scrollPositions = {};
+      }
+
+
+      /*
+       * Save the current scroll position for this note.
+       */
+      function saveScrollPosition() {
+        state.scrollPositions[noteKey] =
+          window.scrollY;
+
+        vscode.setState(state);
+      }
+
+
+      /*
+       * Restore the previous scroll position after the Markdown
+       * has finished laying itself out.
+       */
+      function restoreScrollPosition() {
+        const scrollY =
+          state.scrollPositions[noteKey] || 0;
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            window.scrollTo(0, scrollY);
+          });
+        });
+      }
+
+
+      /*
+       * Don't hammer setState() for every pixel of scrolling.
+       */
+      let scrollTimer;
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          clearTimeout(scrollTimer);
+
+          scrollTimer =
+            setTimeout(
+              saveScrollPosition,
+              100
+            );
+        }
+      );
+
+
+      /*
+       * Make absolutely sure we save before leaving the note.
+       */
+      document
+        .getElementById("back-button")
+        .addEventListener("click", () => {
+          saveScrollPosition();
+
+          vscode.postMessage({
+            command: "back"
+          });
+        });
+
+
+      /*
+       * Add Copy buttons to fenced code blocks.
+       */
+      document
+        .querySelectorAll(".markdown pre")
+        .forEach((pre) => {
+          const code =
+            pre.querySelector("code");
+
+          if (!code) {
+            return;
+          }
+
+          const button =
+            document.createElement("button");
+
+          button.className = "copy-button";
+          button.textContent = "Copy";
+          button.title = "Copy code";
+
+          button.addEventListener(
+            "click",
+            async () => {
+              const text =
+                code.innerText;
+
+              try {
+                await navigator.clipboard.writeText(
+                  text
+                );
+
+                button.textContent =
+                  "Copied!";
+
+                setTimeout(() => {
+                  button.textContent =
+                    "Copy";
+                }, 1200);
+              } catch {
+                const textarea =
+                  document.createElement(
+                    "textarea"
+                  );
+
+                textarea.value = text;
+
+                textarea.style.position =
+                  "fixed";
+
+                textarea.style.opacity =
+                  "0";
+
+                document.body.appendChild(
+                  textarea
+                );
+
+                textarea.select();
+
+                document.execCommand(
+                  "copy"
+                );
+
+                textarea.remove();
+
+                button.textContent =
+                  "Copied!";
+
+                setTimeout(() => {
+                  button.textContent =
+                    "Copy";
+                }, 1200);
+              }
+            }
+          );
+
+          pre.appendChild(button);
+        });
+
+
+      /*
+       * Restore this document's position once everything exists.
+       */
+      restoreScrollPosition();
+    </script>
+  </body>
+</html>
