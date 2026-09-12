@@ -220,3 +220,13 @@ function normalizePath(
     .replace(/\\/g, "/")
     .toLowerCase();
 }
+
+
+/**
+ * Clear the list of MD files in panel-notes.json.
+ */
+export async function clearPanelNotesConfig(): Promise<void> {
+  await writePanelNotesConfig({
+    items: []
+  });
+}

@@ -11,7 +11,8 @@ import {
 
 import {
   addActiveMarkdownFile,
-  cleanPanelNotesConfig
+  cleanPanelNotesConfig,
+  clearPanelNotesConfig
 } from "./support/workspace";
 
 
@@ -32,6 +33,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
     this.showItemList();
   }
 
+
   public async resolveWebviewView(webviewView: vscode.WebviewView): Promise<void> {
     this.webviewView = webviewView;
 
@@ -50,6 +52,11 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.onDidReceiveMessage(
       async (message) => {
+        if (message.command === "clear") {
+          await this.clearItems();
+          return;
+        }
+
         if (message.command === "back") {
           this.showItemList();
           return;
@@ -74,6 +81,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
     this.showItemList();
   }
 
+
   private showItemList(): void {
     if (!this.webviewView) {
       return;
@@ -81,6 +89,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
 
     this.webviewView.webview.html = this.getListHtml(this.items);
   }
+
 
   private async openItem(item: PanelNoteItem): Promise<void> {
     if (!this.webviewView) {
@@ -136,6 +145,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
     `;
   }
 
+
   private async openMarkdown(item: PanelNoteItem): Promise<void> {
     if (!this.webviewView) {
       return;
@@ -164,6 +174,7 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
       console.error("Panel Notes: failed to load markdown", error);
     }
   }
+
 
   private getListHtml(items: PanelNoteItem[]): string {
     const itemsHtml = items
@@ -229,22 +240,59 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
               color:
                 var(--vscode-descriptionForeground);
             }
+
+            .panel-notes-header {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+
+              margin-bottom: 16px;
+            }
+
+            .panel-notes-header h1 {
+              margin: 0;
+            }
+
+            .clear-button {
+              padding: 4px 10px;
+
+              color: #f1f6fc !important;
+              background: #21262d !important;
+
+              border: 1px solid #30363d !important;
+              border-radius: 4px;
+
+              cursor: pointer;
+
+              font-family: inherit;
+              font-size: 12px;
+            }
+
+            .clear-button:hover {
+              background: #30363d !important;
+            }
           </style>
         </head>
 
         <body>
-          <h1>📝 Panel Notes</h1>
+          <div class="panel-notes-header">
+            <h1>📝 Panel Notes</h1>
+
+            <button
+              class="clear-button"
+              id="clear-button"
+            >
+              Clear
+            </button>
+          </div>
 
           ${itemsHtml}
 
           <script>
-            const vscode =
-              acquireVsCodeApi();
+            const vscode = acquireVsCodeApi();
 
             document
-              .querySelectorAll(
-                ".panel-note-item"
-              )
+              .querySelectorAll(".panel-note-item")
               .forEach((button) => {
                 button.addEventListener(
                   "click",
@@ -256,6 +304,14 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
                     });
                   }
                 );
+              });
+
+            document
+              .getElementById("clear-button")
+              .addEventListener("click", () => {
+                vscode.postMessage({
+                  command: "clear"
+                });
               });
           </script>
         </body>
@@ -292,6 +348,16 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
       .replace("{{CSS_URI}}", `${cssUri.toString()}?v=${Date.now()}`)
       .replace("{{CONTENT}}", renderedMarkdown);
   }
+
+
+  public async clearItems(): Promise<void> {
+    await clearPanelNotesConfig();
+
+    this.items = [];
+
+    this.showItemList();
+  }
+
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
