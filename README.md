@@ -9,41 +9,25 @@ Panel Notes v0.1.0 focuses on one thing: making Markdown files in a workspace ea
 
 ### File Discovery & Refresh 
 
-- [ ] File system watcher instead of startup-only scanning to update in/close to real time
-- [ ] Manual refresh button
-- [ ] Hide/exclude specific Markdown files or directories
 - [ ] Better empty-state UI when no Markdown files exist
 
 ### Organization & Navigation
 
 - [ ] Custom ordering of notes
 - [ ] Pin favorite notes to the top
-- [ ] Custom display names
 - [ ] Group notes by directory
-- [ ] Collapsible directory sections
-- [ ] Search/filter notes
 - [ ] Recently opened notes
-- [ ] Remember the last opened note
-- [ ] Table of contents for long Markdown files
-- [ ] Heading navigation
-- [ ] Internal anchor-link support
+- [X] Remember the last opened note
 
 ### Configuration
 
 - [ ] Optional manual entries in `panel-notes.json` wont be over written when auto search does its thing.
-
-### Appearance & Theming
-
-- [ ] Light theme support
-- [ ] Additional Markdown themes
-- [ ] User-selectable syntax highlighting themes
 
 ### Additional Content Types
 
 - [ ] HTML note support
 - [ ] Plain-text note support
 - [ ] Additional document types based on user feedback
-- [ ] Scratch pad so a user doesnt need to create a file to do the same thing for quick notes
 
 ### Accessibility & Polish
 
