@@ -34,5 +34,5 @@ coverage/
 # Package artifacts
 *.vsix
 
-#MacOS
-#.DS_Store
+# Zips
+*.zip

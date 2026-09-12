@@ -43,7 +43,7 @@
     "vscode:prepublish": "npm run compile"
   },
   "dependencies": {
-    "markdown-it": "^14.1.0"
+    "markdown-it": "^15.0.2"
   },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",

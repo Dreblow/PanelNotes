@@ -1,8 +1,10 @@
 import * as vscode from "vscode";
+
 import {
   loadPanelNotesConfig,
   PanelNoteItem
 } from "./config";
+
 import { renderMarkdown } from "./support/markdown";
 
 class PanelNotesViewProvider implements vscode.WebviewViewProvider {
@@ -286,15 +288,57 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
             }
 
             .back-button:hover {
-              background:
-                var(--vscode-button-hoverBackground);
+              background: var(--vscode-button-hoverBackground);
             }
 
-            pre {
-              white-space: pre-wrap;
-              word-wrap: break-word;
-              font-family:
-                var(--vscode-editor-font-family);
+            .markdown {
+              line-height: 1.6;
+            }
+
+            .markdown h1 {
+              font-size: 2em;
+              border-bottom: 1px solid var(--vscode-panel-border);
+              padding-bottom: 0.3em;
+            }
+
+            .markdown h2 {
+              font-size: 1.5em;
+              border-bottom: 1px solid var(--vscode-panel-border);
+              padding-bottom: 0.3em;
+            }
+
+            .markdown code {
+              font-family: var(--vscode-editor-font-family);
+              background: var(--vscode-textCodeBlock-background);
+              padding: 2px 5px;
+              border-radius: 4px;
+            }
+
+            .markdown pre {
+              overflow-x: auto;
+              padding: 12px;
+              background: var(--vscode-textCodeBlock-background);
+              border-radius: 6px;
+            }
+
+            .markdown pre code {
+              padding: 0;
+              background: transparent;
+            }
+
+            .markdown a {
+              color: var(--vscode-textLink-foreground);
+            }
+
+            .markdown blockquote {
+              margin-left: 0;
+              padding-left: 12px;
+              border-left: 4px solid var(--vscode-panel-border);
+              color: var(--vscode-descriptionForeground);
+            }
+
+            .markdown img {
+              max-width: 100%;
             }
           </style>
         </head>
@@ -307,11 +351,12 @@ class PanelNotesViewProvider implements vscode.WebviewViewProvider {
             ← Back
           </button>
 
-          <div class="markdown">${renderedMarkdown}</div>
+          <div class="markdown">
+            ${renderedMarkdown}
+          </div>
 
           <script>
-            const vscode =
-              acquireVsCodeApi();
+            const vscode = acquireVsCodeApi();
 
             document
               .getElementById("back-button")
