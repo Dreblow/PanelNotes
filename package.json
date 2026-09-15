@@ -2,7 +2,7 @@
   "name": "panel-notes",
   "displayName": "Panel Notes",
   "description": "Keep Markdown, HTML, and quick notes right in the VS Code panel.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "dreblow-designs",
   "icon": "media/panel-notes.png",
   "repository": {
